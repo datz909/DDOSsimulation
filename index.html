@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberSecure - Centre de supervision</title>
+    <meta name="description" content="CyberSecure : simulateur pédagogique d'attaque DDoS et de défense manuelle (SYN, UDP, HTTP Flood). Projet de lycée.">
+    <meta name="theme-color" content="#0b0f1a">
+    <meta property="og:title" content="CyberSecure - Simulation DDoS">
+    <meta property="og:description" content="Défends un serveur contre une attaque DDoS simulée : analyse le trafic, bloque les IP, choisis les bonnes contre-mesures.">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%A1%EF%B8%8F%3C/text%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <noscript><p style="padding:24px;color:#fff;background:#b91c1c">Ce site nécessite JavaScript pour fonctionner.</p></noscript>
+
+    <!-- BARRE LATERALE -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">🛡️</div>
+            <h1>CyberSecure</h1>
+            <p>SECURITY CENTER</p>
+        </div>
+
+        <nav>
+            <button class="menu-btn active" onclick="showPage('dashboard', this)">
+                🏠 <span>Dashboard</span>
+            </button>
+
+            <button class="menu-btn" onclick="showPage('simulation', this)">
+                🌐 <span>Simulation DDoS</span>
+            </button>
+
+            <button class="menu-btn" onclick="showPage('redteam', this)">
+                ⚔️ <span>Red Team</span>
+            </button>
+
+            <button class="menu-btn" onclick="showPage('devices', this)">
+                💻 <span>Appareils</span>
+            </button>
+
+            <button class="menu-btn" onclick="showPage('alerts', this)">
+                🚨 <span>Alertes</span>
+            </button>
+
+            <button class="menu-btn" onclick="showPage('logs', this)">
+                📜 <span>Journal</span>
+            </button>
+
+            <button class="menu-btn" onclick="showPage('security', this)">
+                🔐 <span>Sécurité</span>
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <button class="menu-btn" id="cookieSettingsBtn">
+                🍪 <span>Cookies</span>
+            </button>
+            <div class="system-status">
+                <span class="status-dot"></span>
+                Système opérationnel
+            </div>
+        </div>
+
+    </aside>
+
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="main">
+
+        <!-- HEADER -->
+        <header class="topbar">
+
+            <div>
+                <p class="top-label">CENTRE DE SUPERVISION</p>
+                <h2 id="pageTitle">Tableau de bord</h2>
+            </div>
+
+            <div class="user">
+                <div class="user-icon" id="userIcon">A</div>
+
+                <div>
+                    <strong id="userName">Administrateur</strong>
+                    <small id="userSub">Session active</small>
+                </div>
+
+                <button class="logout-btn" id="logoutBtn" title="Se déconnecter">⏻ Déconnexion</button>
+            </div>
+
+        </header>
+
+
+        <!-- ================= DASHBOARD ================= -->
+
+        <section id="dashboard" class="page active-page">
+
+            <div class="welcome">
+                <div>
+                    <h1>Bienvenue sur CyberSecure 👋</h1>
+                    <p>
+                        Surveillance et analyse de votre réseau informatique.
+                    </p>
+                </div>
+
+                <div class="date" id="currentDate"></div>
+            </div>
+
+
+            <!-- STATISTIQUES -->
+
+            <div class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon blue">💻</div>
+
+                    <div>
+                        <p>Appareils</p>
+                        <h3 id="deviceCount">24</h3>
+                        <span class="positive">● Réseau actif</span>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon green">🖥️</div>
+
+                    <div>
+                        <p>Serveurs</p>
+                        <h3>5</h3>
+                        <span class="positive">● Opérationnels</span>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">🚨</div>
+
+                    <div>
+                        <p>Alertes</p>
+                        <h3 id="alertCount">2</h3>
+                        <span class="warning">● À surveiller</span>
+                    </div>
+                </div>
+
+
+                <div class="stat-card">
+                    <div class="stat-icon red">🛡️</div>
+
+                    <div>
+                        <p>Menaces bloquées</p>
+                        <h3 id="threatCount">17</h3>
+                        <span class="positive">● Protection active</span>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="two-columns">
+
+                <!-- ETAT DU RESEAU -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow"><span class="eyebrow-dot"></span>Surveillance</p>
+                            <h2>État du réseau</h2>
+                        </div>
+
+                        <span class="online-badge" id="networkStatusBadge">EN LIGNE</span>
+                    </div>
+
+
+                    <div class="network">
+
+                        <div class="network-line">
+
+                            <div class="device-name">
+                                <span class="device-status online" id="dashSrvWebDot"></span>
+                                SRV-WEB
+                            </div>
+
+                            <span>192.168.1.20</span>
+
+                            <strong class="green-text" id="dashSrvWebText">En ligne</strong>
+
+                        </div>
+
+
+                        <div class="network-line">
+
+                            <div class="device-name">
+                                <span class="device-status online"></span>
+                                SRV-DNS
+                            </div>
+
+                            <span>192.168.1.21</span>
+
+                            <strong class="green-text">En ligne</strong>
+
+                        </div>
+
+
+                        <div class="network-line">
+
+                            <div class="device-name">
+                                <span class="device-status offline"></span>
+                                SRV-FTP
+                            </div>
+
+                            <span>192.168.1.30</span>
+
+                            <strong class="red-text">Hors ligne</strong>
+
+                        </div>
+
+
+                        <div class="network-line">
+
+                            <div class="device-name">
+                                <span class="device-status online"></span>
+                                PC-ADMIN
+                            </div>
+
+                            <span>192.168.1.10</span>
+
+                            <strong class="green-text">En ligne</strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ALERTES -->
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <div>
+                            <p class="eyebrow"><span class="eyebrow-dot"></span>Sécurité</p>
+                            <h2>Alertes récentes</h2>
+                        </div>
+
+                        <span class="alert-number" id="smallAlertCount">2</span>
+
+                    </div>
+
+
+                    <div id="dashboardAlerts">
+
+                        <div class="mini-alert danger">
+                            <span>🚨</span>
+
+                            <div>
+                                <strong>Tentatives de connexion</strong>
+                                <small>5 tentatives échouées</small>
+                            </div>
+                        </div>
+
+
+                        <div class="mini-alert warning">
+                            <span>⚠️</span>
+
+                            <div>
+                                <strong>Serveur FTP</strong>
+                                <small>Serveur hors ligne</small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACCROCHE VERS LA SIMULATION -->
+
+            <div class="attack-zone">
+
+                <div>
+                    <p class="eyebrow"><span class="eyebrow-dot"></span>Zone de test</p>
+                    <h2>Tester les défenses du système</h2>
+
+                    <p>
+                        Lancez une simulation d'attaque DDoS et observez en direct
+                        comment le système détecte puis neutralise la menace.
+                    </p>
+                </div>
+
+                <button class="attack-btn" id="goToSimBtn">
+                    🌐 Ouvrir la simulation
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SIMULATION DDOS ================= -->
+
+        <section id="simulation" class="page">
+
+            <div class="section-title">
+                <p class="eyebrow"><span class="eyebrow-dot"></span>Zone de test</p>
+                <h1>Simulation d'attaque DDoS</h1>
+                <p>
+                    Configurez un scénario, lancez l'attaque simulée, puis prenez
+                    vous-même le contrôle de la riposte pour neutraliser la menace.
+                </p>
+            </div>
+
+            <details class="guide-panel" open>
+                <summary>📖 Mode d'emploi — comment jouer</summary>
+                <div class="guide-content">
+
+                    <h3>🎯 Objectif</h3>
+                    <p>
+                        Empêcher la <strong>charge du serveur</strong> d'atteindre 100%.
+                        Si elle y arrive, le serveur tombe et la simulation est un échec.
+                        Si tu parviens à la faire redescendre et la maintenir basse, tu gagnes.
+                    </p>
+
+                    <h3>▶️ Étape 1 — Configurer et lancer</h3>
+                    <p>
+                        Choisis un <strong>type d'attaque</strong> (SYN, UDP ou HTTP Flood) et une
+                        <strong>intensité</strong>, puis clique sur <em>« Lancer l'attaque »</em>.
+                        Le trafic entrant commence à augmenter, tout comme la charge du serveur.
+                    </p>
+
+                    <h3>🛡️ Étape 2 — Activer la riposte manuelle</h3>
+                    <p>
+                        Clique sur <em>« Activer la riposte manuelle »</em>. Cela débloque les
+                        deux outils que tu vas devoir utiliser toi-même :
+                    </p>
+                    <ul>
+                        <li><strong>Les contre-mesures</strong> (panneau de gauche) : chaque carte représente une technique
+                            de défense. Elle n'est vraiment efficace que si elle correspond au type d'attaque en cours
+                            (indiqué en bas de chaque carte). Une contre-mesure mal choisie a un effet très faible.</li>
+                        <li><strong>La file de trafic à traiter</strong> (panneau de droite) : de nouvelles adresses IP
+                            apparaissent en direct. Clique sur <em>« Analyser »</em> pour observer leur débit et leur
+                            origine.</li>
+                    </ul>
+
+                    <h3>🧱 Étape 3 — Bloquer une IP via la console du pare-feu</h3>
+                    <p>
+                        Une fois une IP analysée, tu dois toi-même transmettre son adresse au pare-feu, comme un
+                        vrai administrateur système :
+                    </p>
+                    <ul>
+                        <li>Clique sur le bouton <strong>📋</strong> à côté de l'IP pour la copier, ou fais-la
+                            <strong>glisser</strong> directement dans le champ de la console.</li>
+                        <li>Colle-la (<kbd>Ctrl+V</kbd>) dans le champ de la console du pare-feu si tu l'as copiée.</li>
+                        <li>Clique sur <em>« Exécuter le blocage »</em> (ou appuie sur <kbd>Entrée</kbd>) pour ajouter
+                            la règle — comme une vraie commande <code>iptables</code>.</li>
+                    </ul>
+                    <p>
+                        La console refuse d'exécuter une IP qui n'a pas encore été analysée, ou une adresse qui ne
+                        correspond à aucun trafic surveillé — exactement comme un vrai pare-feu te préviendrait d'une
+                        commande invalide.
+                    </p>
+
+                    <h3>🔍 Comment reconnaître une IP malveillante ?</h3>
+                    <p>
+                        Après analyse, un indicateur de suspicion apparaît :
+                        <strong>⚠️ Débit anormal</strong> (très probablement une attaque),
+                        <strong>🔸 À surveiller</strong> (ambigu — peut être un vrai client actif, réfléchis avant de bloquer),
+                        <strong>✅ Normal</strong> (trafic légitime, ne pas bloquer).
+                        Bloquer un visiteur légitime par erreur fait chuter ta <strong>réputation</strong>.
+                    </p>
+
+                    <h3>⚙️ Le budget d'actions</h3>
+                    <p>
+                        Chaque contre-mesure appliquée et chaque IP bloquée coûte <strong>1 action</strong>.
+                        Tu ne commences qu'avec un nombre limité d'actions (affiché dans les statistiques) —
+                        une action supplémentaire se régénère lentement au fil du temps. Il faut donc
+                        prioriser : traiter les IPs qui pèsent vraiment sur le serveur, et choisir la bonne
+                        contre-mesure du premier coup plutôt que de tout essayer.
+                    </p>
+
+                    <h3>🏆 Fin de partie</h3>
+                    <p>
+                        <strong>Victoire :</strong> la charge serveur redescend et reste basse un certain temps
+                        → un score est calculé à partir des actions restantes et de ta réputation.<br>
+                        <strong>Défaite :</strong> la charge atteint 100% → le serveur passe hors ligne.<br>
+                        Utilise <em>« Réinitialiser »</em> à tout moment pour recommencer une nouvelle simulation.
+                    </p>
+
+                    <p class="guide-tip">💡 Consulte aussi le panneau <strong>« Conseils de défense »</strong> plus bas :
+                        il explique le fonctionnement de l'attaque en cours et les vraies bonnes pratiques pour la contrer.</p>
+                </div>
+            </details>
+
+            <div class="sim-banner" id="simBanner">
+                <span class="sim-banner-dot"></span>
+                <span id="simBannerText">Système au repos — aucune menace active</span>
+            </div>
+
+            <div class="panel sim-controls">
+
+                <div class="sim-control-group">
+                    <label>Type d'attaque</label>
+                    <div class="pill-group" id="attackTypeGroup">
+                        <button class="pill active" data-type="syn">SYN Flood</button>
+                        <button class="pill" data-type="udp">UDP Flood</button>
+                        <button class="pill" data-type="http">HTTP Flood</button>
+                    </div>
+                </div>
+
+                <div class="sim-control-group">
+                    <label>Intensité</label>
+                    <div class="pill-group" id="intensityGroup">
+                        <button class="pill" data-level="faible">Faible</button>
+                        <button class="pill active" data-level="moyenne">Moyenne</button>
+                        <button class="pill" data-level="forte">Forte</button>
+                    </div>
+                </div>
+
+                <div class="sim-actions">
+                    <button class="attack-btn" id="launchBtn" title="Démarre la simulation avec le type d'attaque et l'intensité choisis ci-dessus">⚠️ Lancer l'attaque</button>
+                    <button class="defense-btn" id="defenseBtn" disabled title="Débloque les contre-mesures et le blocage manuel d'IP">🛡️ Activer la riposte manuelle</button>
+                    <button class="reset-btn" id="resetBtn" title="Arrête la simulation en cours et remet tout à zéro">↺ Réinitialiser</button>
+                </div>
+
+            </div>
+
+            <div class="sim-stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon cyan">📈</div>
+                    <div>
+                        <p>Requêtes/sec</p>
+                        <h3 id="reqPerSec">150</h3>
+                        <span class="text-dim">flux entrant</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon red">🌐</div>
+                    <div>
+                        <p>IP attaquantes</p>
+                        <h3 id="attackerIpCount">0</h3>
+                        <span class="text-dim">sources actives</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon green">🧱</div>
+                    <div>
+                        <p>Paquets bloqués</p>
+                        <h3 id="blockedCount">0</h3>
+                        <span class="text-dim">par le pare-feu</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon orange">⚙️</div>
+                    <div>
+                        <p>Charge serveur</p>
+                        <h3 id="serverLoadValue">4%</h3>
+                        <span class="text-dim" id="serverLoadStatus">nominale</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon purple">🎯</div>
+                    <div>
+                        <p>Actions restantes</p>
+                        <h3 id="actionsLeft">8</h3>
+                        <span class="text-dim">budget de riposte</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon cyan">⭐</div>
+                    <div>
+                        <p>Réputation</p>
+                        <h3 id="reputationValue">100%</h3>
+                        <span class="text-dim" id="reputationStatus">aucune erreur</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="server-load-bar-wrap">
+                <div class="server-load-bar-label">
+                    <span>Charge du serveur cible</span>
+                    <span id="serverLoadPercentLabel">4%</span>
+                </div>
+                <div class="server-load-bar-track">
+                    <div class="server-load-bar-fill" id="serverLoadBar"></div>
+                </div>
+            </div>
+
+            <div class="session-recap">
+                <div class="session-recap-item">
+                    <span class="session-recap-value" id="sessionAttempts">0</span>
+                    <span class="session-recap-label">Tentatives</span>
+                </div>
+                <div class="session-recap-sep"></div>
+                <div class="session-recap-item">
+                    <span class="session-recap-value" id="sessionVictories">0</span>
+                    <span class="session-recap-label">Serveurs sauvés</span>
+                </div>
+                <div class="session-recap-sep"></div>
+                <div class="session-recap-item">
+                    <span class="session-recap-value" id="sessionBestScore">—</span>
+                    <span class="session-recap-label">Meilleur score</span>
+                </div>
+            </div>
+
+            <div class="two-columns">
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow"><span class="eyebrow-dot"></span>Trafic réseau</p>
+                            <h2>Débit entrant (requêtes/s)</h2>
+                        </div>
+                    </div>
+                    <canvas id="trafficChart"></canvas>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow"><span class="eyebrow-dot"></span>Topologie</p>
+                            <h2>Carte des connexions</h2>
+                        </div>
+                    </div>
+                    <canvas id="networkCanvas"></canvas>
+                </div>
+
+            </div>
+
+            <!-- CENTRE DE RIPOSTE MANUELLE -->
+            <div class="two-columns">
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow"><span class="eyebrow-dot"></span>Riposte</p>
+                            <h2>Contre-mesures disponibles</h2>
+                        </div>
+                    </div>
+
+                    <p class="panel-subtext">
+                        Chaque contre-mesure coûte 1 action. Elle n'est vraiment efficace que
+                        si elle correspond au type d'attaque en cours — sinon son effet est faible.
+                    </p>
+
+                    <div class="countermeasures-grid" id="countermeasuresGrid">
+
+                        <div class="countermeasure-card" data-defense="syncookies" data-effective="syn">
+                            <div class="cm-head">
+                                <span class="cm-icon">🍪</span>
+                                <h3>SYN Cookies</h3>
+                            </div>
+                            <p>Le serveur ne réserve plus de mémoire tant que la poignée de main TCP n'est pas confirmée.</p>
+                            <small class="cm-tip">Efficace contre : SYN Flood</small>
+                            <button class="cm-btn" data-defense-btn="syncookies">Appliquer</button>
+                        </div>
+
+                        <div class="countermeasure-card" data-defense="ratelimit" data-effective="udp">
+                            <div class="cm-head">
+                                <span class="cm-icon">🚦</span>
+                                <h3>Limitation de débit</h3>
+                            </div>
+                            <p>Impose un nombre maximum de paquets par seconde et par source sur les protocoles UDP.</p>
+                            <small class="cm-tip">Efficace contre : UDP Flood</small>
+                            <button class="cm-btn" data-defense-btn="ratelimit">Appliquer</button>
+                        </div>
+
+                        <div class="countermeasure-card" data-defense="waf" data-effective="http">
+                            <div class="cm-head">
+                                <span class="cm-icon">🧩</span>
+                                <h3>WAF + CAPTCHA</h3>
+                            </div>
+                            <p>Filtre les requêtes HTTP applicatives et vérifie que le visiteur est bien humain.</p>
+                            <small class="cm-tip">Efficace contre : HTTP Flood</small>
+                            <button class="cm-btn" data-defense-btn="waf">Appliquer</button>
+                        </div>
+
+                        <div class="countermeasure-card" data-defense="blackhole" data-effective="udp">
+                            <div class="cm-head">
+                                <span class="cm-icon">🕳️</span>
+                                <h3>Blackholing</h3>
+                            </div>
+                            <p>Redirige tout le trafic d'une plage IP vers le néant. Radical mais peu précis.</p>
+                            <small class="cm-tip">Efficace contre : UDP Flood</small>
+                            <button class="cm-btn" data-defense-btn="blackhole">Appliquer</button>
+                        </div>
+
+                        <div class="countermeasure-card" data-defense="geoblock" data-effective="syn">
+                            <div class="cm-head">
+                                <span class="cm-icon">🌍</span>
+                                <h3>Filtrage géographique</h3>
+                            </div>
+                            <p>Bloque temporairement les plages géographiques d'où proviennent la majorité des paquets SYN.</p>
+                            <small class="cm-tip">Efficace contre : SYN Flood</small>
+                            <button class="cm-btn" data-defense-btn="geoblock">Appliquer</button>
+                        </div>
+
+                        <div class="countermeasure-card" data-defense="cdn" data-effective="http">
+                            <div class="cm-head">
+                                <span class="cm-icon">☁️</span>
+                                <h3>Répartition CDN</h3>
+                            </div>
+                            <p>Absorbe et répartit les requêtes HTTP sur plusieurs points de présence.</p>
+                            <small class="cm-tip">Efficace contre : HTTP Flood</small>
+                            <button class="cm-btn" data-defense-btn="cdn">Appliquer</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow"><span class="eyebrow-dot"></span>Analyse</p>
+                            <h2>Trafic à traiter</h2>
+                        </div>
+                        <span class="alert-number" id="ipQueueCount">0</span>
+                    </div>
+
+                    <p class="panel-subtext">
+                        Analyse chaque IP, puis <strong>copie-la</strong> (📋) ou <strong>glisse-la</strong>
+                        directement dans la console du pare-feu ci-dessous pour la bloquer.
+                    </p>
+
+                    <div class="ip-table" id="ipTable">
+                        <div class="ip-row ip-row-head">
+                            <span>Adresse IP</span>
+                            <span>Débit</span>
+                            <span>Origine</span>
+                            <span>Nature</span>
+                            <span></span>
+                        </div>
+                        <p class="sim-log-empty" id="ipTableEmpty">Aucune IP à analyser pour le moment.</p>
+                    </div>
+
+                    <div class="firewall-console">
+                        <div class="firewall-console-header">
+                            <span>🧱 Console du pare-feu</span>
+                            <span class="firewall-status" id="firewallStatus">en attente</span>
+                        </div>
+
+                        <div class="firewall-cmd-preview" id="firewallCmdPreview">iptables -A INPUT -s <em>&lt;adresse IP&gt;</em> -j DROP</div>
+
+                        <div class="firewall-input-row"
+                             id="firewallDropZone">
+                            <input type="text"
+                                   id="firewallIpInput"
+                                   placeholder="Colle ou glisse une adresse IP ici…"
+                                   autocomplete="off"
+                                   disabled>
+                            <button id="firewallBlockBtn" class="firewall-btn" disabled
+                                    title="Ajoute une règle de blocage pour cette adresse (coûte 1 action)">
+                                ⛔ Exécuter le blocage
+                            </button>
+                        </div>
+
+                        <p class="firewall-message" id="firewallMessage">
+                            La console s'active dès que la riposte manuelle est activée.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CONSEILS DE SECURITE -->
+            <div class="panel tips-panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow"><span class="eyebrow-dot"></span>Formation</p>
+                        <h2>Conseils de défense</h2>
+                    </div>
+                </div>
+                <div id="tipsContent" class="tips-content">
+                    <p>Choisis un type d'attaque puis lance la simulation pour recevoir des conseils adaptés.</p>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <p class="eyebrow"><span class="eyebrow-dot"></span>Chronologie</p>
+                        <h2>Journal de la simulation</h2>
+                    </div>
+                    <span class="alert-number" id="simEventCount">0</span>
+                </div>
+
+                <div id="simLog" class="sim-log">
+                    <p class="sim-log-empty">Aucun événement pour le moment. Lancez une simulation pour commencer.</p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= RED TEAM ================= -->
+
+        <section id="redteam" class="page">
+
+            <div class="section-title">
+                <p class="eyebrow"><span class="eyebrow-dot"></span>Zone de test</p>
+                <h1>Red Team — jouer l'attaquant</h1>
+                <p>
+                    Recrute des bots, puis envoie des salves : tout ce que tu fais alimente en direct la
+                    simulation de l'onglet « Simulation DDoS ». Joue seul contre un défenseur IA, ou en duo
+                    contre un camarade. Abats le serveur (100 % de charge) avant la fin du temps imparti.
+                </p>
+            </div>
+
+            <div class="sim-banner" id="rtBanner">
+                <span class="sim-banner-dot"></span>
+                <span id="rtBannerText">Prêt — lance l'opération pour commencer à recruter.</span>
+            </div>
+
+            <div class="panel sim-controls">
+                <div class="sim-control-group">
+                    <label>Mode de jeu</label>
+                    <div class="pill-group" id="rtModeGroup">
+                        <button class="pill active" data-rtmode="solo">Solo — défenseur IA</button>
+                        <button class="pill" data-rtmode="duo">Duo — un camarade défend</button>
+                    </div>
+                </div>
+                <div class="sim-control-group" id="rtAiWrap">
+                    <label>Niveau du défenseur IA</label>
+                    <div class="pill-group" id="rtAiGroup">
+                        <button class="pill" data-ai="debutant">Débutant</button>
+                        <button class="pill active" data-ai="standard">Standard</button>
+                        <button class="pill" data-ai="expert">Expert</button>
+                    </div>
+                </div>
+                <div class="sim-actions">
+                    <button class="attack-btn" id="rtStartBtn">⚔️ Lancer l'opération</button>
+                    <button class="reset-btn" id="rtResetBtn">↺ Réinitialiser</button>
+                </div>
+            </div>
+            <p class="panel-subtext" id="rtLinkInfo"></p>
+
+            <div class="sim-stats">
+                <div class="stat-card"><div class="stat-icon purple">💰</div><div><p>Crédits C2</p><h3 id="rtCredits">100</h3><span class="text-dim">+3 par tick</span></div></div>
+                <div class="stat-card"><div class="stat-icon red">🤖</div><div><p>Bots actifs</p><h3 id="rtBotCount">0 / 0</h3><span class="text-dim">max 10 actifs</span></div></div>
+                <div class="stat-card"><div class="stat-icon orange">⚙️</div><div><p>Charge serveur</p><h3 id="rtLoad">0%</h3><span class="text-dim">objectif : 100 %</span></div></div>
+                <div class="stat-card"><div class="stat-icon cyan">📈</div><div><p>Requêtes/sec</p><h3 id="rtReq">0</h3><span class="text-dim">flux envoyé</span></div></div>
+                <div class="stat-card"><div class="stat-icon green">⏱️</div><div><p>Temps restant</p><h3 id="rtTime">—</h3><span class="text-dim">avant victoire défense</span></div></div>
+            </div>
+
+            <div class="server-load-bar-wrap">
+                <div class="server-load-bar-label"><span>Charge du serveur cible</span><span id="rtLoadLabel">0%</span></div>
+                <div class="server-load-bar-track"><div class="server-load-bar-fill" id="rtLoadBar"></div></div>
+            </div>
+
+            <div class="two-columns">
+                <div class="panel">
+                    <div class="panel-header"><div><p class="eyebrow"><span class="eyebrow-dot"></span>Recrutement</p><h2>Constituer le botnet</h2></div></div>
+                    <p class="panel-subtext">Chaque bot apparaît aussitôt dans le « Trafic à traiter » du défenseur. Les bots discrets sont faibles, les bots puissants sont repérés.</p>
+                    <div class="countermeasures-grid" id="rtRecruitGrid"></div>
+
+                    <div class="panel-header" style="margin-top:18px"><div><p class="eyebrow"><span class="eyebrow-dot"></span>Attaque</p><h2>Envoyer une salve</h2></div></div>
+                    <p class="panel-subtext">10 crédits, 3 ticks de tir puis rechargement. Choisis le vecteur : le défenseur doit deviner la bonne contre-mesure.</p>
+                    <div class="pill-group" id="rtSalvoGroup"></div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header"><div><p class="eyebrow"><span class="eyebrow-dot"></span>Botnet</p><h2>Tes bots</h2></div></div>
+                    <div class="rt-bots" id="rtBots"></div>
+
+                    <div class="panel-header" style="margin-top:18px"><div><p class="eyebrow"><span class="eyebrow-dot"></span>Chronologie</p><h2>Événements</h2></div></div>
+                    <div class="sim-log" id="rtLog"></div>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- ================= APPAREILS ================= -->
+
+        <section id="devices" class="page">
+
+            <div class="section-title">
+                <p class="eyebrow"><span class="eyebrow-dot"></span>Réseau</p>
+                <h1>Appareils connectés</h1>
+                <p>Liste des équipements présents sur le réseau.</p>
+            </div>
+
+
+            <div class="panel">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Nom</th>
+                            <th>Adresse IP</th>
+                            <th>Type</th>
+                            <th>État</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>SRV-WEB</td>
+                            <td>192.168.1.20</td>
+                            <td>Serveur Web</td>
+                            <td><span class="table-online" id="devicesSrvWebStatus">● En ligne</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>SRV-DNS</td>
+                            <td>192.168.1.21</td>
+                            <td>Serveur DNS</td>
+                            <td><span class="table-online">● En ligne</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>SRV-FTP</td>
+                            <td>192.168.1.30</td>
+                            <td>Serveur FTP</td>
+                            <td><span class="table-offline">● Hors ligne</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>PC-ADMIN</td>
+                            <td>192.168.1.10</td>
+                            <td>Ordinateur</td>
+                            <td><span class="table-online">● En ligne</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>PC-COMPTA</td>
+                            <td>192.168.1.15</td>
+                            <td>Ordinateur</td>
+                            <td><span class="table-online">● En ligne</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>PC-ACCUEIL</td>
+                            <td>192.168.1.40</td>
+                            <td>Ordinateur</td>
+                            <td><span class="table-online">● En ligne</span></td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= ALERTES ================= -->
+
+        <section id="alerts" class="page">
+
+            <div class="section-title">
+                <p class="eyebrow"><span class="eyebrow-dot"></span>Sécurité</p>
+                <h1>Centre des alertes</h1>
+                <p>Surveillance des événements de sécurité.</p>
+            </div>
+
+
+            <div class="panel">
+
+                <div id="allAlerts">
+
+                    <div class="big-alert danger">
+
+                        <div class="alert-icon">🚨</div>
+
+                        <div>
+                            <h3>Tentatives de connexion suspectes</h3>
+
+                            <p>
+                                Plusieurs tentatives de connexion échouées
+                                ont été détectées.
+                            </p>
+
+                            <small>Priorité : ÉLEVÉE</small>
+                        </div>
+
+                        <span class="alert-tag danger-tag">
+                            ACTIVE
+                        </span>
+
+                    </div>
+
+
+                    <div class="big-alert warning">
+
+                        <div class="alert-icon">⚠️</div>
+
+                        <div>
+                            <h3>Serveur SRV-FTP hors ligne</h3>
+
+                            <p>
+                                Le serveur FTP ne répond actuellement plus.
+                            </p>
+
+                            <small>Priorité : MOYENNE</small>
+                        </div>
+
+                        <span class="alert-tag warning-tag">
+                            EN COURS
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= JOURNAL ================= -->
+
+        <section id="logs" class="page">
+
+            <div class="section-title">
+                <p class="eyebrow"><span class="eyebrow-dot"></span>Activité</p>
+                <h1>Journal des événements</h1>
+                <p>Historique des événements du système.</p>
+            </div>
+
+
+            <div class="panel">
+
+                <div id="logsList">
+
+                    <div class="log">
+                        <span>10:32:15</span>
+                        <strong class="log-green">INFO</strong>
+                        Connexion administrateur réussie
+                    </div>
+
+                    <div class="log">
+                        <span>10:29:41</span>
+                        <strong class="log-green">INFO</strong>
+                        Analyse du réseau terminée
+                    </div>
+
+                    <div class="log">
+                        <span>10:25:08</span>
+                        <strong class="log-blue">SCAN</strong>
+                        SRV-WEB détecté sur le réseau
+                    </div>
+
+                    <div class="log">
+                        <span>10:20:33</span>
+                        <strong class="log-green">INFO</strong>
+                        Système de surveillance démarré
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= SECURITE ================= -->
+
+        <section id="security" class="page">
+
+            <div class="section-title">
+                <p class="eyebrow"><span class="eyebrow-dot"></span>Protection</p>
+                <h1>Sécurité du système</h1>
+                <p>État des protections du réseau.</p>
+            </div>
+
+
+            <div class="security-grid">
+
+                <div class="security-card">
+                    <div class="security-icon">🛡️</div>
+                    <h3>Pare-feu</h3>
+                    <p>Protection réseau</p>
+                    <strong class="green-text">ACTIF</strong>
+                </div>
+
+
+                <div class="security-card">
+                    <div class="security-icon">🔐</div>
+                    <h3>Authentification</h3>
+                    <p>Contrôle des accès</p>
+                    <strong class="green-text">ACTIVE</strong>
+                </div>
+
+
+                <div class="security-card">
+                    <div class="security-icon">🔎</div>
+                    <h3>Surveillance</h3>
+                    <p>Analyse du réseau</p>
+                    <strong class="green-text">ACTIVE</strong>
+                </div>
+
+
+                <div class="security-card">
+                    <div class="security-icon">🚨</div>
+                    <h3>Détection</h3>
+                    <p>Détection des menaces</p>
+                    <strong class="green-text">ACTIVE</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ================= CONNEXION ================= -->
+    <div class="auth-screen" id="authScreen" hidden>
+        <div class="auth-card">
+            <div class="auth-logo">🛡️</div>
+            <h1 class="auth-title">CyberSecure</h1>
+            <p class="auth-sub">SECURITY CENTER — ACCÈS SÉCURISÉ</p>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login" type="button">Connexion</button>
+                <button class="auth-tab" data-tab="signup" type="button">Créer un compte</button>
+            </div>
+
+            <form id="authForm" novalidate>
+                <div class="field" id="fieldName" hidden>
+                    <label for="authName">Nom d'utilisateur</label>
+                    <input id="authName" type="text" autocomplete="username" placeholder="ex : alex">
+                </div>
+                <div class="field">
+                    <label for="authEmail">Adresse e-mail</label>
+                    <input id="authEmail" type="email" autocomplete="email" placeholder="toi@exemple.fr">
+                </div>
+                <div class="field">
+                    <label for="authPass">Mot de passe</label>
+                    <input id="authPass" type="password" autocomplete="current-password" placeholder="8 caractères minimum">
+                    <div class="strength" id="strength" hidden><span id="strengthBar"></span></div>
+                </div>
+                <div class="field" id="fieldConfirm" hidden>
+                    <label for="authConfirm">Confirmer le mot de passe</label>
+                    <input id="authConfirm" type="password" autocomplete="new-password">
+                </div>
+
+                <label class="check">
+                    <input type="checkbox" id="authRemember" checked>
+                    <span>Se souvenir de moi (cookie de 7 jours)</span>
+                </label>
+
+                <p class="auth-error" id="authError" role="alert"></p>
+                <button class="attack-btn auth-submit" id="authSubmit" type="submit">Se connecter</button>
+            </form>
+
+            <p class="auth-note">Projet pédagogique : les comptes sont enregistrés uniquement dans ce navigateur. Un vrai site stocke les mots de passe côté serveur.</p>
+        </div>
+    </div>
+
+    <!-- ================= COOKIES ================= -->
+    <div class="cookie-banner" id="cookieBanner" hidden>
+        <div class="cookie-text">
+            <strong>🍪 Ce site utilise des cookies</strong>
+            <p>Les cookies nécessaires gardent ta session ouverte. Les autres (préférences, statistiques de visite) sont optionnels : tu choisis.</p>
+        </div>
+        <div class="cookie-actions">
+            <button class="reset-btn" id="ckRefuse" type="button">Tout refuser</button>
+            <button class="reset-btn" id="ckCustom" type="button">Personnaliser</button>
+            <button class="attack-btn" id="ckAccept" type="button">Tout accepter</button>
+        </div>
+    </div>
+
+    <div class="cookie-modal" id="cookieModal" hidden>
+        <div class="cookie-card">
+            <h2>🍪 Gérer les cookies</h2>
+
+            <div class="cookie-row">
+                <div><strong>Nécessaires</strong><small>Session de connexion et choix de consentement. Toujours actifs.</small></div>
+                <label class="switch"><input type="checkbox" checked disabled><span></span></label>
+            </div>
+            <div class="cookie-row">
+                <div><strong>Préférences</strong><small>Retient la dernière page visitée pour la rouvrir à ton retour.</small></div>
+                <label class="switch"><input type="checkbox" id="ckPrefs"><span></span></label>
+            </div>
+            <div class="cookie-row">
+                <div><strong>Statistiques</strong><small>Compte le nombre de tes visites (stocké uniquement chez toi).</small></div>
+                <label class="switch"><input type="checkbox" id="ckStats"><span></span></label>
+            </div>
+
+            <div class="cookie-actions">
+                <button class="reset-btn" id="ckClose" type="button">Annuler</button>
+                <button class="attack-btn" id="ckSave" type="button">Enregistrer mes choix</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
